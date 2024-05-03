@@ -1,25 +1,33 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState, useEffect } from "react";
+import axios from "axios";
+import "./App.css";
 
-function App() {
+export default function App() {
+  const [country, setCountry] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("https://restcountries.com/v3.1/all");
+        setCountry(response.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+  }, []);
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div className="country-container">
+        {country.map((data) => {
+          return (
+            <div key={data.cca3} className="country-card">
+              <img src={data.flags.png} alt={`Flag of ${data.name.common}`} />
+              <h2>{data.name.common}</h2>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
-
-export default App;
